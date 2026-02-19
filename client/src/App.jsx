@@ -5,7 +5,7 @@ import TrackingSummary from './components/TrackingSummary';
 import UploadForm from './components/UploadForm';
 import TrackingTable from './components/TrackingTable';
 
-const API_BASE = 'http://localhost:5001/api/track';
+const API_BASE = 'https://bluedart-tracking.onrender.com/api/track';
 
 function App() {
     const [records, setRecords] = useState([]);

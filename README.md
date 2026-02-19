@@ -57,9 +57,11 @@ A premium, automated shipment tracking platform for Blue Dart consignments. This
 
 ## 📊 API Endpoints
 
-- `POST /api/track/upload`: Process tracking numbers.
-- `GET /api/track/status`: Retrieve all tracked records.
-- `GET /api/track/report`: Download the Excel report.
+**Base URL**: `https://bluedart-tracking.onrender.com/api/track`
+
+- `POST /upload`: Process tracking numbers.
+- `GET /status`: Retrieve all tracked records.
+- `GET /report`: Download the Excel report.
 
 ---
 Built with ❤️ for logistics efficiency.
