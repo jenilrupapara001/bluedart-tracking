@@ -30,7 +30,8 @@ async function processTrackingNumber(trackingNumber) {
 
         if (isFailure || data.success === false) {
             record.currentStatus = 'Sync Pending';
-            record.lastActivity = shipmentData.Checkpoints?.[0]?.Activity || 'Syncing from official site... (Possible delay on provider side)';
+            const defaultActivity = data.success === false ? 'API provider returned unsuccessful status' : 'Syncing from official site... (Possible delay on provider side)';
+            record.lastActivity = shipmentData.Checkpoints?.[0]?.Activity || defaultActivity;
             record.lastLocation = shipmentData.Checkpoints?.[0]?.Location || 'N/A';
         } else {
             // Use MostRecentStatus for display, falling back to ShipmentState
@@ -51,10 +52,16 @@ async function processTrackingNumber(trackingNumber) {
             if (dateStr) {
                 // Attempt to parse date, handle potential errors
                 try {
-                    record.expectedDelivery = new Date(dateStr);
+                    const parsedDate = new Date(dateStr);
+                    if (!isNaN(parsedDate.getTime())) {
+                        record.expectedDelivery = parsedDate;
+                    } else {
+                        console.warn(`[WARN] Invalid date string for ${trackingNumber}: ${dateStr}`);
+                        record.expectedDelivery = null;
+                    }
                 } catch (dateError) {
                     console.error(`Error parsing date for ${trackingNumber}: ${dateStr}`, dateError);
-                    record.expectedDelivery = null; // Set to null if parsing fails
+                    record.expectedDelivery = null;
                 }
             }
         }
@@ -76,7 +83,10 @@ async function processTrackingNumber(trackingNumber) {
         return { success: true, trackingNumber, status: record.currentStatus };
 
     } catch (error) {
+        console.error(`[ERROR] Processing ${trackingNumber}:`, error.message);
         record.retryCount += 1;
+        record.currentStatus = 'API Error';
+        record.lastActivity = `System Error: ${error.message}`;
         record.lastUpdated = new Date();
         await record.save();
         return { success: false, trackingNumber, error: error.message };

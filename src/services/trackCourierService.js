@@ -16,7 +16,8 @@ async function trackShipment(trackingNumber) {
     try {
         const response = await axios.get(`${TRACKCOURIER_API_URL}`, {
             headers: {
-                'X-API-Key': apiKey
+                'X-API-Key': apiKey,
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
             },
             params: {
                 courier: 'bluedart',
