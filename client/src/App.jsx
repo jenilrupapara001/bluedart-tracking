@@ -5,9 +5,9 @@ import TrackingSummary from './components/TrackingSummary';
 import UploadForm from './components/UploadForm';
 import TrackingTable from './components/TrackingTable';
 
-const API_BASE = window.location.origin === 'http://localhost:3000' || window.location.origin === 'http://localhost:5173'
-    ? 'https://bluedart-tracking.onrender.com/api/track'
-    : '/api/track';
+const API_BASE = window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')
+    ? 'http://localhost:5001/api/track'
+    : 'https://bluedart-tracking.onrender.com/api/track';
 
 function App() {
     const [records, setRecords] = useState([]);
