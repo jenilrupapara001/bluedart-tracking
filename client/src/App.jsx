@@ -32,7 +32,7 @@ function App() {
 
     const handleRefresh = async (trackingNumber) => {
         try {
-            await axios.post(`${API_BASE}/upload`, { trackingNumbers: trackingNumber });
+            await axios.post(`${API_BASE}/upload`, { trackingNumbers: [trackingNumber] });
             fetchData();
         } catch (err) {
             console.error('Refresh failed:', err);
@@ -81,7 +81,7 @@ function App() {
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
                     <div className="lg:col-span-1 sticky top-24">
-                        <UploadForm onUploadSuccess={fetchData} />
+                        <UploadForm onUploadSuccess={fetchData} apiBase={API_BASE} />
                     </div>
                     <div className="lg:col-span-3">
                         <TrackingTable records={records} loading={loading} onRefresh={handleRefresh} />

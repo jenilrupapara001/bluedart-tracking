@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Upload, X, Hash, Send } from 'lucide-react';
 
-const UploadForm = ({ onUploadSuccess }) => {
+const UploadForm = ({ onUploadSuccess, apiBase }) => {
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null);
@@ -15,7 +15,7 @@ const UploadForm = ({ onUploadSuccess }) => {
         setLoading(true);
         setStatus(null);
         try {
-            await axios.post('http://localhost:5001/api/track/upload', { trackingNumbers: numbers });
+            await axios.post(`${apiBase}/upload`, { trackingNumbers: numbers });
             setStatus({ type: 'success', message: `Processing ${numbers.length} tracking numbers...` });
             setInput('');
             onUploadSuccess();

@@ -116,9 +116,10 @@ const TrackingTable = ({ records, loading, onRefresh }) => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col gap-0.5">
-                                                <div className="text-sm font-bold text-slate-700">
-                                                    {r.lastActivity || 'No details available'}
-                                                </div>
+                                                <div
+                                                    className="text-sm font-bold text-slate-700"
+                                                    dangerouslySetInnerHTML={{ __html: r.lastActivity || 'No details available' }}
+                                                />
                                                 <div className="flex items-center gap-1 text-xs text-slate-400">
                                                     <MapPin className="w-3 h-3" />
                                                     {r.lastLocation || 'Awaiting Update'}

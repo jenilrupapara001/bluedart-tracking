@@ -23,23 +23,39 @@ async function processTrackingNumber(trackingNumber) {
 
         record.rawResponse = data;
 
-        // Use MostRecentStatus for display, falling back to ShipmentState
-        record.currentStatus = shipmentData.MostRecentStatus || shipmentData.ShipmentState || 'UNKNOWN';
+        // Handle API failures (e.g., sync delays)
+        const isFailure = shipmentData.Result === 'failure' ||
+            shipmentData.isEmptyTable === true ||
+            (shipmentData.Checkpoints && shipmentData.Checkpoints[0]?.Activity?.includes('No information present'));
 
-        // Get last location from the most recent checkpoint
-        if (shipmentData.Checkpoints && shipmentData.Checkpoints.length > 0) {
-            record.lastLocation = shipmentData.Checkpoints[0].Location || 'Unknown';
-            record.lastActivity = shipmentData.Checkpoints[0].Activity || '';
+        if (isFailure || data.success === false) {
+            record.currentStatus = 'Sync Pending';
+            record.lastActivity = shipmentData.Checkpoints?.[0]?.Activity || 'Syncing from official site... (Possible delay on provider side)';
+            record.lastLocation = shipmentData.Checkpoints?.[0]?.Location || 'N/A';
         } else {
-            record.lastLocation = 'Awaiting Update';
-            record.lastActivity = '';
+            // Use MostRecentStatus for display, falling back to ShipmentState
+            record.currentStatus = shipmentData.MostRecentStatus || shipmentData.ShipmentState || 'UNKNOWN';
+
+            if (shipmentData.Checkpoints && shipmentData.Checkpoints.length > 0) {
+                record.lastLocation = shipmentData.Checkpoints[0].Location || 'Unknown';
+                record.lastActivity = shipmentData.Checkpoints[0].Activity || '';
+            } else {
+                record.lastLocation = 'Awaiting Update';
+                record.lastActivity = '';
+            }
         }
 
-        // Parse dates from AdditionalInfo if present (e.g., "Scheduled Delivery: 16-Feb-2026")
+        // Parse AdditionalInfo for scheduled delivery date
         if (shipmentData.AdditionalInfo && shipmentData.AdditionalInfo.includes('Scheduled Delivery:')) {
             const dateStr = shipmentData.AdditionalInfo.split('Scheduled Delivery:')[1].trim();
             if (dateStr) {
-                record.expectedDelivery = new Date(dateStr);
+                // Attempt to parse date, handle potential errors
+                try {
+                    record.expectedDelivery = new Date(dateStr);
+                } catch (dateError) {
+                    console.error(`Error parsing date for ${trackingNumber}: ${dateStr}`, dateError);
+                    record.expectedDelivery = null; // Set to null if parsing fails
+                }
             }
         }
 
