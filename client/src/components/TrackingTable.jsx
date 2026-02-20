@@ -193,9 +193,10 @@ const TrackingTable = ({ records, loading, onRefresh }) => {
 
                                                                 <div className="flex flex-col gap-1 pb-4">
                                                                     <div className="flex items-center gap-3">
-                                                                        <span className="text-xs font-black text-slate-800 tracking-tight">
-                                                                            {cp.Activity}
-                                                                        </span>
+                                                                        <span
+                                                                            className="text-xs font-black text-slate-800 tracking-tight"
+                                                                            dangerouslySetInnerHTML={{ __html: cp.Activity }}
+                                                                        />
                                                                         <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase border ${cp.CheckpointState === 'delivered' ? 'bg-green-50 text-green-600 border-green-100' :
                                                                             cp.CheckpointState === 'outfordelivery' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' :
                                                                                 'bg-slate-50 text-slate-500 border-slate-100'
